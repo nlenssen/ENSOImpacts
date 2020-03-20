@@ -1,0 +1,55 @@
+impactsAnalysisName <- 'Cru_2.5_1951_1996_alpha90_Data'
+
+# info for the validation climatology period
+validationDataName <- 'cmapSeasonalv1_2.5.Rda'
+validationName     <- 'CMAP'
+climatologyStartYear <- 1980
+
+# name the project
+projectName <- sprintf('FinalResults_')
+
+# Lead of the forecast to analyze
+lead <- 1
+
+# Range of the analysis
+startYear <- 1997
+endYear  <- 2016
+
+# switches for parts of the analysis
+verification <- TRUE
+seasonalVerification <- TRUE
+
+###############################################################################
+# Namelist pieces that will generally remain constant between experiments
+###############################################################################
+# Libraries needed
+library(fields)
+library(RColorBrewer)
+
+
+# cutoff for realistic deterministic forecast
+detCutoff <- 0.5
+
+# Load my user functions
+source('SharedCode/AllFunctions.R')
+
+# Directories for intermediate steps, output, and figures
+ddir <- sprintf('Data/Forecast/%sData',projectName)
+plotdir <- sprintf('Figures/Forecast/%sFigures',projectName)
+
+# Build necessary directories if needed
+dir.create(ddir, showWarnings = FALSE)
+dir.create(plotdir, showWarnings = FALSE)
+dir.create(sprintf('%s/Seasonal',plotdir), showWarnings = FALSE)
+
+# Constant used to verify that the data we have is correct
+FCAST_CATS <- 3
+
+# climatology info
+climatologyLength <- 30
+
+# level for upper tercile to exceed to not be dry
+dryCutoff <- 10
+
+# dry mask selection
+fancyDryMask <- FALSE

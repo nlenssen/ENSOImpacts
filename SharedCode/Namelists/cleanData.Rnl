@@ -1,0 +1,87 @@
+# Libraries needed
+library(ncdf4)
+library(fields)
+library(lubridate)
+library(rjson)
+
+# Load my user functions
+source('SharedCode/AllFunctions.R')
+
+###############################################################################
+# Land Area Parameters
+###############################################################################
+filenameLand <- 'Data/Raw/gpw_v4_land_water_area_rev10_landareakm_30_min.asc'
+filenameWater <- 'Data/Raw/gpw_v4_land_water_area_rev10_waterareakm_30_min.asc'
+
+tol <- 0.05
+
+###############################################################################
+# Nino 3.4 parameters
+###############################################################################
+ensoFile <- 'nina34.1950.2017.ESD.txt'
+
+ensoStartYear <- 1950
+ensoEndYear   <- 2017
+
+###############################################################################
+# CRU parameters
+###############################################################################
+cruFile <- 'cruts4.01_0.5_1901_2016.nc'
+
+cruStartYear <- 1950
+cruEndYear   <- 2016
+
+
+###############################################################################
+# CRU New et al parameters
+###############################################################################
+newFile <- 'cru_new_1950_1998.nc'
+
+newStartYear <- 1950
+newEndYear   <- 1998
+
+
+###############################################################################
+# GPCC parameters
+###############################################################################
+# File paths in secondary script in SharedCode/Scripts/cleanGPCC.R
+
+gpccStartYear <- 1950
+gpccEndYear   <- 2013
+
+###############################################################################
+# CMAP parameters
+###############################################################################
+# File paths in secondary script in SharedCode/Scripts/cleanCMAP.R
+
+cmapStartYear <- 1950
+cmapEndYear   <- 2017
+
+###############################################################################
+# GPCP parameters
+###############################################################################
+gpcpFile <- 'gpcp2.3_2.5_1979_2017_ppt.nc'
+
+gpccStartYear <- 1950
+gpccEndYear   <- 2017
+
+###############################################################################
+# IRI Forecast parameters
+###############################################################################
+# mask locations that have less than this number of forecasts issued over the
+# forecast record
+forecastMaskCutoff <- 15
+
+# grid size to make sure that we don't have incomplete forecasts
+LON_SIZE <- 144
+LAT_SIZE <- 72
+
+FCAST_CATS <- 3
+
+###############################################################################
+# IRI ENSO Forecast parameters
+###############################################################################
+iriEnsoFile <- 'enso_iri_prob.json'
+endYear <- 2016
+lead <- 1
+

@@ -1,0 +1,48 @@
+###############################################################################
+# Change these for new experiment
+###############################################################################
+dataName <- 'Cru_0.5'
+
+startYear <- 1951
+endYear   <- 2016
+
+pptData <- 'cruSeasonal_0.5.Rda'
+
+plotting <- TRUE
+
+# control the Nino cutoffs
+cutoff <- 0.5
+strengthCutoff <- 1
+consecutiveMonths <- 5
+
+# when data is pure climatology
+countCutoff <- 2
+
+###############################################################################
+# Namelist pieces that will generally remain constant between experiments
+###############################################################################
+# Libraries needed
+library(fields)
+library(RColorBrewer)
+
+# name the project
+projectName <- sprintf('%s_%s_%s_alpha99_',dataName,startYear,endYear)
+
+# Load my user functions
+source('SharedCode/AllFunctions.R')
+
+# Parameters for the entire analysis
+ddir <- sprintf('Data/Impacts/%sData',projectName)
+plotdir <- sprintf('Figures/Impacts/%sFigures',projectName)
+
+# Build necessary directories if needed
+dir.create(ddir, showWarnings = FALSE)
+dir.create(plotdir, showWarnings = FALSE)
+dir.create(sprintf('%s/empiricalProbs',plotdir), showWarnings = FALSE)
+dir.create(sprintf('%s/pVals',plotdir), showWarnings = FALSE)
+
+# alpha
+alpha <- 0.99
+
+# dry mask threshold (mm)
+dryCutoff <- 10

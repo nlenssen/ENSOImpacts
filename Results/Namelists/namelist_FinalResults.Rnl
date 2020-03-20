@@ -1,0 +1,26 @@
+library(ncdf4)
+library(fields)
+library(RColorBrewer)
+source('SharedCode/AllFunctions.R')
+
+plotdir <- '~/Desktop/scratchPlots/reorgPlots'
+
+fcastProject <- 'FinalResults'
+impactsProject <- 'Cru_0.5_1951_2016_alpha90'
+
+
+
+# load in the land area data
+
+# visual params
+textSize <- 1.25
+lw <- 1.75
+
+###############################################################################
+# for cruDataSummary
+###############################################################################
+
+cruFile <- 'cruts4.01_0.5_1901_2016.nc'
+cruStartYear <- 1950
+cruEndYear   <- 2016
+
