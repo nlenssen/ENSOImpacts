@@ -507,12 +507,8 @@ grocField <- function(fcast,obs,tropics=TRUE){
 	forecastTimeInds <- which(forecastTime %in% obsTime)
 	obsTimeInds  <- which(obsTime %in% forecastTime)
 
-
-	pb   <- txtProgressBar(1, nrow(gridList), style=3)
-
 	# locInd <- 5086 # with tropics FALSE!
 	for(locInd in 1:nrow(gridList)){
-		setTxtProgressBar(pb,locInd)
 
 		lonInd <- gridList[locInd,1]
 		latInd <- gridList[locInd,2]
@@ -625,11 +621,8 @@ grocSeries <- function(fcast,obs,tropics=TRUE){
 	denomSeries <- rep(NA, nForecasts)
 	grocSeries  <- rep(NA, nForecasts)
 
-
-	pb   <- txtProgressBar(1, nForecasts, style=3)
-
+	# loop over all time points
 	for(tInd in 1:nForecasts){
-		setTxtProgressBar(pb,tInd)
 
 		# get the correct time series index in the observation
 		outcomeInd <- which(obs$timeMap[,3] == fcast$timeMap[tInd,3])
@@ -1558,11 +1551,7 @@ seasonalField12 <- function(arr,tYear,FUN){
 
 	nYear <- length(tYear) - 1
 
-	pb   <- txtProgressBar(2, nYear, style=3)
-
 	for(i in 2:nYear){
-		setTxtProgressBar(pb, i)
-
 		tsInd <- 1 + 12*(i-1)
 
 		for(j in 1:12){
