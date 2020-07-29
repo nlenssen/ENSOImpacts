@@ -1,4 +1,4 @@
-#source('Impacts/Namelists/namelist_Cru_0.5_1951_2016_11_alpha90.Rnl')
+source('Impacts/Namelists/namelist_Cru_0.5_1951_2016_alpha90.Rnl')
 load(sprintf('%s/maskedAnalysisResults.Rda',ddir))
 
 # unpack the list (to facilitate multiple data formats)
@@ -80,10 +80,10 @@ tempCounts[tempCounts==-1] <- NA
 
 tempProb <- tempCounts/ensoYears[,,seasonInds[s],el]
 
-png(sprintf('%s/empiricalProbsShift/png%sProb.png',plotdir,plotName),1250,600)
+png(sprintf('%s/png%sProb.png',plotdir,plotName),1250,600)
 image(newLon,lat,tempProb[lonInds,],col=hlColor[hl,],breaks=probBreaks,
 	main=plotTitle,xlab='',ylab='',ylim=c(-60,90),
-	cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize, legend.cex=textSize)
+	cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize)
 image(newLon,lat,nonSig[lonInds,],col=nonSigColor,add=TRUE)
 image(newLon,lat,dryMask[lonInds,,seasonInds[s]],col=dryColor,add=TRUE)
 world(add=TRUE)

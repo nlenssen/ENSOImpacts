@@ -1,4 +1,5 @@
-#source('Impacts/Namelists/namelist_Cru_0.5_1951_2016_11_alpha90.Rnl')
+# source('Impacts/Namelists/namelist_Cru_0.5_1951_2016_alpha90.Rnl')
+# plotdir <- '/Users/lenssen/Desktop/scratchPlots/testNewMaps'
 
 load(sprintf('%s/maskedAnalysisResults.Rda',ddir))
 
@@ -12,6 +13,8 @@ pValArray <- resultsList$pValArray
 dryMask   <- resultsList$dryMask
 sigCounts <- resultsList$sigCounts
 ensoYears <- resultsList$ensoYears
+
+oceanMask <- ifelse(is.na(ensoYears[,,1,1]),1,NA)
 
 # create the names needed to loop through
 seasonInds <- c(1,4,7,10)
@@ -31,16 +34,31 @@ ellaName   <- c('El Niño', 'La Niña', 'Neutral')
 
 anomName   <- c('Above', 'Below')
 
-textSize <- 1.5
+textSize <- 1.25
 
 # colors to plot with
 aboveColor   <- c(brewer.pal(7,'GnBu'))[3:7]
+aboveColor <- c(rgb(218,246,207,maxColorValue=255),
+				rgb(191,244,168,maxColorValue=255),
+				rgb(134,184,117,maxColorValue=255),
+				rgb(87,148,201,maxColorValue=255),
+				rgb(5,65,237,maxColorValue=255))
 belowColor   <- c(brewer.pal(7,'YlOrBr'))[3:7]
+belowColor <- c(rgb(251,249,76,maxColorValue=255),
+				rgb(255,186,76,maxColorValue=255),
+				rgb(197,133,65,maxColorValue=255),
+				rgb(158,78,40,maxColorValue=255),
+				rgb(112,55,14,maxColorValue=255))
+
 hlColor <- rbind(aboveColor,belowColor)
 
-nonSigColor  <- adjustcolor('black',alpha=0.15)
-oceanColor   <- adjustcolor('paleturquoise1',alpha=0.3)
-dryColor     <- adjustcolor('darkred',alpha=0.15)
+nonSigColor  <- adjustcolor('black', alpha=0.15)
+oceanColor   <- adjustcolor('paleturquoise1', alpha=0.15)
+oceanColor   <- rgb(242,250,255,maxColorValue=255)
+
+dryColor     <- adjustcolor('red1', alpha=0.25)
+dryColor     <- adjustcolor(rgb(248,211,209,maxColorValue=255),alpha=0.5)
+
 
 # hard coded for now, think about how I may want to change this
 pValBreaks <- c(0.85,0.9,0.95,0.98,0.99,1)
@@ -48,8 +66,8 @@ pValBreaks <- c(0.85,0.9,0.95,0.98,0.99,1)
 probColors <- tim.colors(6)[1:5]
 probBreaks <- c(1/3,0.5,2/3,0.8,0.9,1)
 
-probBreaksCont <- seq(1/3,1,length=257)
-probColorsCont <- designer.colors(256,brewer.pal(9,'YlGnBu'))
+probBreaksCont <- seq(1/3,1, length=257)
+probColorsCont <- designer.colors(256, brewer.pal(9,'YlGnBu'))
 
 # lon x lat x season x el/la x high/low anom
 
@@ -88,17 +106,18 @@ pdf(sprintf('%s/empiricalProbs/%sProb.pdf',plotdir,plotName),10,6)
 image.plot(lon,lat,tempProb,col=hlColor[hl,],breaks=probBreaks,
 	main=plotTitle,xlab='',ylab='',ylim=c(-60,90),
 	cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize, legend.cex=textSize)
-image(lon,lat,nonSig,col=nonSigColor,add=TRUE)
+#image(lon,lat,nonSig,col=nonSigColor,add=TRUE)
 image(lon,lat,dryMask[,,seasonInds[s]],col=dryColor,add=TRUE)
+image(lon,lat,oceanMask,col=oceanColor,add=T)
 world(add=TRUE)
 abline(h=c(30,-30), lty=3)
 
 # optional labeling for paper plots
-# if(hl==1){
-# 	legend(-197, 95, '(a)', cex = textSize, bty='n')
-# } else{
-# 	legend(-197, 95, '(b)', cex = textSize, bty='n')
-# }
+if(hl==1){
+	legend(-197, 95, '(a)', cex = textSize, bty='n')
+} else{
+	legend(-197, 95, '(b)', cex = textSize, bty='n')
+}
 
 dev.off()
 

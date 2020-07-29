@@ -9,25 +9,7 @@
 #		over the record
 #		- Allow easy drop of more stats as needed.
 
-source('SharedCode/AllFunctions.R')
-source('Forecast/Scratch/igFunctions.R')
-
-# stuff from the namelist
-impactsAnalysisName <- 'Cru_2.5_1951_1996_8_Data'
-
-startYear <- 1997
-endYear  <- 2016
-
-ninoCutoff <- 1
-ninaCutoff <- -1
-
-FCAST_CATS <- 3
-
-climatologyLength <- 30
-
-dryCutoff <- 10
-
-fancyDryMask <- FALSE
+source('Forecast/Code/igFunctions.R')
 
 # loop over the various leads
 leads <- 1:4
@@ -48,15 +30,16 @@ ensoTropicsIgn <- matrix(NA,nrow=length(leads),ncol=2)
 
 # load the nino 3.4 time series
 load('Data/RawProcessed/ninaSeasonal.Rda')
+load('Data/Impacts/Cru_0.5_1951_2016_Data/ninaSeasonalInd.Rda')
+
 
 # load in the iri seasonal forecasts
 load('Data/RawProcessed/forecastObjIRI.Rda')
-
+load('Data/RawProcessed/landProp_2.5.Rda')
 
 # load in the appropriate observational data
-load('Data/Forecast/CMAP_Data/obsTercile.Rda')
-load('Data/Forecast/CMAP_Data/dryMask.Rda')
-load('Data/RawProcessed/landProp_2.5.Rda')
+load(sprintf('%s/obsTercile.Rda',ddir))
+load(sprintf('%s/dryMask.Rda',ddir))
 
 landPropMat <- landPropList$prop
 
@@ -77,10 +60,8 @@ for(i in 1:length(leads)){
 	####################################
 
 	# build ENSO real forecast (function)
-
-	source('Forecast/Scratch/makeRealisticForecast.R')
 	ensoRealForecastListLead <- makeRealisticForecast(leads[i],ensoForecastList,
-												 ninaSeasonal,resultsList,forecastList)
+												 ninaIndicator,ninaSeasonal,resultsList,forecastList)
 
 	# subset the iri forecast to the same time with the correct lead
 	inds <- which(forecastList$timeMap[,3] %in% ensoRealForecastListLead$timeMap[,3] & 
@@ -147,109 +128,4 @@ for(i in 1:length(leads)){
 }
 
 
-
-
-
-
-# get the theoretical limit for the enso forecast over the same time period!
-ddir <- 'Data/Forecast/CMAP_Data'
-load(sprintf('%s/ensoForecast.Rda',ddir))
-
-inds <- which(ensoProbForecastList$timeMap[,3] %in% ensoRealForecastListLead$timeMap[,3])
-
-ensoProbForecastListTrim <- list(lon=ensoProbForecastList$lon,
-								lat=ensoProbForecastList$lat,
-								forecast=ensoProbForecastList$forecast[,,inds,],
-								timeMap=ensoProbForecastList$timeMap[inds,])
-
-ensoProbTotalGlobal  <- rpssTotalDecomp(ensoProbForecastListTrim,observedTercile,dryMask,tropics=FALSE)
-ensoProbTotalTropics <- rpssTotalDecomp(ensoProbForecastListTrim,observedTercile,dryMask,tropics=TRUE)
-
-textSize <- 1.5
-
-# plot up the results
-pdf('Figures/Results/LeadWork/leadTimeComp.pdf',14,7)
-par(mfrow=c(1,2),mar=c(5, 5, 4, 3) + 0.1)
-
-plot(1:4,iriTropics[,1],ylim=c(-0.01,0.04),type='b',lwd=2,col='blue',
-	xlab='Lead Time (months)', ylab='Ranked Probability Skill Score',
-	main='Forecast Skill (All Seasons 2003-2016)',
-  cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize)
-
-grid(lwd=1.5)
-points(1:4,ensoTropics[,1],type='b',lwd=2,col='red')
-
-points(1:4,iriGlobal[,1],type='b',lwd=2,col='blue',lty=3)
-points(1:4,ensoGlobal[,1],type='b',lwd=2,col='red',lty=3)
-abline(h=0)
-
-legend(0.67,0.043, '(a)', bty='n',cex=textSize)
-
-# legend('topright', c('IRI Forecast (Tropics)', 'IRI Forecast (Global)',
-# 					 'ENSO Forecast (Tropics)', 'ENSO Forecast (Global)'),
-# 			col=c('blue','blue', 'red', 'red'),lwd=2,lty=c(1,3,1,3),cex=textSize)
-
-
-plot(1:4,iriTropics[,2],ylim=c(-0.01,0.04),type='b',lwd=2,col='blue',
-	xlab='Lead Time (months)', ylab='RPS Resolution Score',
-	main='Forecast Resolution (All Seasons 2003-2016)',
-  cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize)
-
-grid(lwd=1.5)
-points(1:4,ensoTropics[,2],type='b',lwd=2,col='red')
-
-points(1:4,iriGlobal[,2],type='b',lwd=2,col='blue',lty=3)
-points(1:4,ensoGlobal[,2],type='b',lwd=2,col='red',lty=3)
-abline(h=0)
-
-legend('topright', c('IRI Forecast (Tropics)', 'IRI Forecast (Global)',
-					 'ENSO Forecast (Tropics)', 'ENSO Forecast (Global)'),
-			col=c('blue','blue', 'red', 'red'),lwd=2,lty=c(1,3,1,3),cex=textSize,bty='n')
-
-legend(0.67,0.043, '(b)', bty='n',cex=textSize)
-
-dev.off()
-
-# ig plot
-pdf('Figures/Results/LeadWork/leadTimeCompIgn.pdf',14,7)
-par(mfrow=c(1,2))
-plot(1:4,iriTropicsIgn[,1],ylim=c(-0.01,0.04),type='b',lwd=2,col='blue',
-	xlab='Lead Time (months)', ylab='Effective Interest Rate',
-	main='Forecast Skill (All Seasons 2003-2016)')
-grid(lwd=1.5)
-points(1:4,ensoTropicsIgn[,1],type='b',lwd=2,col='red')
-
-points(1:4,iriGlobalIgn[,1],type='b',lwd=2,col='blue',lty=3)
-points(1:4,ensoGlobalIgn[,1],type='b',lwd=2,col='red',lty=3)
-abline(h=0)
-
-# abline(h = ensoProbTotalTropics$rpss, col= 'red', lwd=1.5, lty=1)
-# abline(h = ensoProbTotalGlobal$rpss, col= 'red', lwd=1.5, lty=3)
-
-legend('topright', c('IRI Forecast (Tropics)', 'IRI Forecast (Global)',
-					 'ENSO Forecast (Tropics)', 'ENSO Forecast (Global)'),
-			col=c('blue','blue', 'red', 'red'),lwd=2,lty=c(1,3,1,3))
-
-
-plot(1:4,iriTropicsIgn[,2],ylim=c(-0.01,0.04),type='b',lwd=2,col='blue',
-	xlab='Lead Time (months)', ylab='IGN Resolution Score',
-	main='Forecast Resolution (All Seasons 2003-2016)')
-grid(lwd=1.5)
-points(1:4,ensoTropicsIgn[,2],type='b',lwd=2,col='red')
-
-points(1:4,iriGlobalIgn[,2],type='b',lwd=2,col='blue',lty=3)
-points(1:4,ensoGlobalIgn[,2],type='b',lwd=2,col='red',lty=3)
-abline(h=0)
-
-legend('topright', c('IRI Forecast (Tropics)', 'IRI Forecast (Global)',
-					 'ENSO Forecast (Tropics)', 'ENSO Forecast (Global)'),
-			col=c('blue','blue', 'red', 'red'),lwd=2,lty=c(1,3,1,3))
-
-dev.off()
-
-
-
-
-
-
-
+save(iriGlobal,iriTropics,ensoGlobal,ensoTropics,file=sprintf('%s/multiLead.Rda',ddir))

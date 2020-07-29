@@ -6,7 +6,8 @@ load(sprintf('Data/RawProcessed/%s',validationDataName))
 tercileList <- list()
 meanList    <- list()
 dryMask <- array(NA, dim=c(nrow(observationList$observations),ncol(observationList$observations),12))
-# 
+
+
 climatologyYears <- 
 	climatologyStartYear:(climatologyStartYear+climatologyLength-1)
 
@@ -61,7 +62,7 @@ if(fancyDryMask){
 			isDry <- TRUE
 		}
 
-		dryMask[i,j,s] <- ifelse(isDry, 1, 0)
+		dryMask[i,j,s] <- ifelse(isDry, 0, 1)
 	}
 	}
 	}

@@ -2,6 +2,7 @@
 load('Data/RawProcessed/ninaSeasonal.Rda')
 load('Data/RawProcessed/landProp_0.5.Rda')
 load('Data/RawProcessed/cruDataSummary.Rda')
+load('Data/Impacts/Cru_0.5_1951_2016_Data/ninaSeasonalInd.Rda')
 
 # load in the forecast info
 load(sprintf('Data/Forecast/%s_Data/iriForecast.Rda',fcastProject))
@@ -80,10 +81,10 @@ dev.off()
 ###############################################################################
 
 # Auto-generated from running Impacts analysis
-system(sprintf('cp Figures/Impacts/%s_Figures/empiricalProbs/01NinaAboveDJFProb.pdf %s',
+system(sprintf('cp Figures/Impacts/%s_Figures/empiricalProbs/01NinaAboveDJFProb.pdf %s/03a_NinaAboveDJFProb.pdf',
 	impactsProject, plotdir))
 
-system(sprintf('cp Figures/Impacts/%s_Figures/empiricalProbs/01NinaBelowDJFProb.pdf %s',
+system(sprintf('cp Figures/Impacts/%s_Figures/empiricalProbs/01NinaBelowDJFProb.pdf %s/03b_NinaBelowDJFProb.pdf',
 	impactsProject, plotdir))
 
 ###############################################################################
@@ -94,7 +95,7 @@ pal <- brewer.pal(4,'BrBG')
 resNino <- -0.0005
 disNino <- 0.455
 
-pdf(sprintf('%s/resolutionDiscrimination.pdf',plotdir),10,14)
+pdf(sprintf('%s/04_resolutionDiscrimination.pdf',plotdir),10,14)
 par(mfrow=c(2,1),mar=c(5, 5, 4, 3) + 0.1)
 
 forceYR <- c(0)
@@ -137,8 +138,8 @@ abline(h=0.5)
 
 legend(2000.5,0.75, 
 	c('IRI Forecast',
-	  'ENSO Probabilistic Forecast (Oracle SST)',
-	  'ENSO Deterministic Forecast (Oracle SST)'),
+	  'Probabilistic Known-ENSO EBF',
+	  'Deterministic Known-ENSO EBF'),
 	col=c('black',pal[c(4,1)]),lwd=lw,lty=c(1,1,1,1),bty='n')
 
 legend('topright',as.character(round(as.numeric(totalGrocTropics[c(1,2,4)]),4)),text.col=c('black',pal[c(4,1)]), bty='n')
@@ -169,12 +170,12 @@ zr <- c(0,maxCutoff)
 
 pal <- c('white',designer.colors(256,brewer.pal(9,'YlGnBu')))
 
-mainVec <- c("IRI Resolution",
+mainVec <- c("IRI Forecast Resolution",
 			 "ENSO Realistic Forecast Resolution",
-			 "ENSO Probabilistic Forecast Resolution",
-			 "ENSO Deterministic Forecast Resolution")
+			 "Probabilistic Known-ENSO EBF Resolution",
+			 "Deterministic Known-ENSO EBF Resolution")
 
-pdf(sprintf('%s/fieldRes.pdf',plotdir),10,12)
+pdf(sprintf('%s/05_fieldRes.pdf',plotdir),10,12)
 par(mfrow=c(2,1))
 
 image.plot(lon,lat,z[,,1],col=pal,ylim=c(-60,90),main=mainVec[1],xlab='',ylab='',
@@ -193,13 +194,14 @@ legend(-197, 95, '(b)', cex = textSize, bty='n')
 dev.off()
 
 ###############################################################################
-# (7) Geographic Discrimination of the the IRI and prob ENSO
+# (6) Geographic Discrimination of the the IRI and prob ENSO
 ###############################################################################
 
 lon <- field$lon
 lat <- field$lat
 
 minCutoff <- 0.5
+zMax <- 0.85
 
 z <- array(NA, dim=c(length(lon),length(lat),2))
 
@@ -208,15 +210,16 @@ z[,,2]  <- ensoProbGrocField * fcastMask
 
 
 z[z<minCutoff] <- minCutoff
+z[z>zMax] <- zMax
 
-zr <- c(minCutoff,1)
+zr <- c(minCutoff,zMax)
 
 pal <- c('white',designer.colors(256,brewer.pal(9,'YlGnBu')))
 
-mainVec <- c("IRI Discrimination (GROC)",
-			 "ENSO Probabilistic Forecast Discrimination (GROC)")
+mainVec <- c("IRI Forecast Discrimination (GROC)",
+			 "Probabilistic Known-ENSO EBF Discrimination (GROC)")
 
-pdf(sprintf('%s/fieldGroc.pdf',plotdir),10,12)
+pdf(sprintf('%s/06_fieldGroc.pdf',plotdir),10,12)
 par(mfrow=c(2,1))
 
 image.plot(lon,lat,z[,,1],col=pal,ylim=c(-60,90),main=mainVec[1],xlab='',ylab='',zlim=zr,
@@ -234,13 +237,13 @@ legend(-197, 95, '(b)', cex = textSize, bty='n')
 dev.off()
 
 ###############################################################################
-# (8) Reliability Time Series
+# (7) Reliability Time Series
 ###############################################################################
 
 pal <- brewer.pal(4,'BrBG')
 relNino <- 0.011
 
-pdf(sprintf('%s/relSeries.pdf',plotdir),10,7)
+pdf(sprintf('%s/07_relSeries.pdf',plotdir),10,7)
 par(mfrow=c(1,1),mar=c(5, 5, 4, 3) + 0.1)
 
 forceYR <- c(0.01)
@@ -259,8 +262,8 @@ abline(h=0)
 
 legend('bottomleft', 
 	c('IRI Forecast',
-	  'ENSO Probabilistic Forecast (Oracle SST)',
-	  'ENSO Deterministic Forecast (Oracle SST)'),
+	  'Probabilistic Known-ENSO EBF',
+	  'Deterministic Known-ENSO EBF'),
 	col=c('black',pal[c(4,2)]),lwd=lw,lty=c(1,1,1,1),bty='n')
 
 legend('bottomright',as.character(round(as.numeric(totalTabTropics[c(1,2,4),3]),4)),text.col=c('black',pal[c(4,2)]), bty='n')
@@ -271,35 +274,35 @@ dev.off()
 
 
 ###############################################################################
-# (9) Reliability Diagrams
+# (8) Reliability Diagrams
 ###############################################################################
 
 # tropics without realistic included
-pdf(sprintf('%s/reliabilityDiagramsTropicsTrim.pdf',plotdir),18,5.5)
+pdf(sprintf('%s/08_reliabilityDiagramsTropicsTrim.pdf',plotdir),18,5.5)
 
 par(mfrow=c(1,3))
 
 yr <- c(0,245000)
 
-reliabilityDiagram(iriReliability$tropics,yr,main='IRI Tropics Reliability')
+reliabilityDiagram(iriReliability$tropics,yr,main='IRI Forecast Tropics Reliability')
 legend(-0.09, 1.06, '(a)', bty='n', cex=textSize)
 #reliabilityDiagram(ensoRealReliability$tropics,yr,main='ENSO Realistic Tropics Reliability')
-reliabilityDiagram(ensoProbReliability$tropics,yr,main='ENSO Probabilistic Tropics Reliability')
+reliabilityDiagram(ensoProbReliability$tropics,yr,main='Probabilistic Known-ENSO EBF Tropics Reliability')
 legend(-0.09, 1.06, '(b)', bty='n', cex=textSize)
 
-reliabilityDiagram(ensoReliability$tropics,yr,main='ENSO Deterministic Tropics Reliability')
+reliabilityDiagram(ensoReliability$tropics,yr,main='Deterministic Known-ENSO EBF Tropics Reliability')
 legend(-0.09, 1.06, '(c)', bty='n', cex=textSize)
 
 dev.off()
 
 ###############################################################################
-# (10) RPSS Time Series for global and tropics
+# (9) RPSS Time Series for global and tropics
 ###############################################################################
 pal <- brewer.pal(4,'BrBG')
-forceYR <- c(0.2,-0.6)
-rpsNino <- -0.61
+forceYR <- c(0.2,-0.75)
+rpsNino <- -0.75
 
-pdf(sprintf('%s/rpssSeriesTrim.pdf',plotdir),10,14)
+pdf(sprintf('%s/09_rpssSeriesTrim.pdf',plotdir),10,14)
 par(mfrow=c(2,1), mar=c(5, 5, 4, 3) + 0.1)
 
 x  <- global$timeMap[,3]
@@ -338,8 +341,8 @@ abline(h=0)
 
 legend(2001,0.25,
 	c('IRI Forecast',
-	  'ENSO Probabilistic Forecast (Oracle SST)',
-	  'ENSO Deterministic Forecast (Oracle SST)'),
+	  'Probabilistic Known-ENSO EBF',
+	  'Deterministic Known-ENSO EBF'),
 	col=c('black',pal[c(4,1)]),lwd=lw,lty=c(1,1,1,1),bty='n')
 legend('topleft', '(b)', cex = textSize, bty='n')
 legend(2015,-0.44,as.character(round(as.numeric(totalTabTropics[c(1,2,4),1]),4)),text.col=c('black',pal[c(4,1)]), bty='n')
@@ -350,14 +353,14 @@ addNino(y=c(-100,rpsNino,rpsNino,-100))
 dev.off()
 
 ###############################################################################
-# (11) RPSS Fields
+# (10) RPSS Fields
 ###############################################################################
 
 
 lon <- field$lon
 lat <- field$lat
 
-maxCutoff <- 0.25
+maxCutoff <- 0.25 #0.25
 
 z <- array(NA, dim=c(length(lon),length(lat),2))
 
@@ -376,27 +379,27 @@ z2 <- rpssComp$global$field * fcastMask
 
 zMax2 <- max(abs(z), na.rm=T)
 
-zCap2 <- 0.2
+zCap2 <- 0.2 #0.2
 z[z>zCap2] <- zCap2
 
 zr2 <- c(-zCap2, zCap2)
 
 pal2 <- designer.colors(256, brewer.pal(11,'PiYG'))
 
-mainVec <- c("IRI RPSS",
-			 "ENSO Probabilistic Forecast RPSS")
+mainVec <- c("IRI Forecast RPSS",
+			 "Probabilistic Known-ENSO EBF RPSS")
 
-pdf(sprintf('%s/fieldRpssProb.pdf',plotdir),10,18)
+pdf(sprintf('%s/10_fieldRpssProb.pdf',plotdir),10,18)
 par(mfrow=c(3,1))
 
-image.plot(lon,lat,z[,,1],col=pal,ylim=c(-60,90),main=mainVec[1],xlab='',ylab='',
+image.plot(lon,lat,z[,,1],col=pal,ylim=c(-60,90), zlim=zr,main=mainVec[1],xlab='',ylab='',
 	cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize, legend.cex=textSize)	
 world(add=T)
 abline(h=c(30,-30), lty=3)	
 legend(-189, 92, '(a)', cex = textSize, bty='n')
 
 
-image.plot(lon,lat,z[,,2],col=pal,ylim=c(-60,90),main=mainVec[2],xlab='',ylab='',
+image.plot(lon,lat,z[,,2],col=pal,ylim=c(-60,90), zlim=zr,main=mainVec[2],xlab='',ylab='',
 	cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize, legend.cex=textSize)	
 world(add=T)
 abline(h=c(30,-30), lty=3)
@@ -404,7 +407,7 @@ legend(-189, 92, '(b)', cex = textSize, bty='n')
 
 
 image.plot(lon, lat, z2, ylim=c(-60,90), zlim=zr2, col=pal2, 
-	xlab='', ylab='', main='IRI RPSS (Probabilstic ENSO reference)',
+	xlab='', ylab='', main='IRI Forecast RPSS (EBF reference)',
 	cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize, legend.cex=textSize)
 world(add=T)
 abline(h=c(30,-30), lty=3)
@@ -413,14 +416,14 @@ legend(-189, 92, '(c)', cex = textSize, bty='n')
 dev.off()
 
 ###############################################################################
-# (12) RPSS alternative series comparison
+# (11) RPSS alternative series comparison
 ###############################################################################
 
 forceYR <- c(-0.22,0)
-altCol <- 'red4'
+altCol <- 'red2'
 aNino <- -0.22
 
-pdf(sprintf('%s/rpssSeriesComp.pdf',plotdir),10,14)
+pdf(sprintf('%s/11_rpssSeriesComp.pdf',plotdir),10,14)
 par(mfrow=c(2,1), mar=c(5, 5, 4, 3) + 0.1)
 
 x  <- tropics$timeMap[,3]
@@ -443,6 +446,11 @@ legend('topleft', '(a)', cex = textSize, bty='n')
 
 legend(2015.5,-0.01,as.character(signif(as.numeric(totalVec[1:2]),3)),text.col=c('black',altCol), bty='n')
 
+legend(2001,0.22, 
+	c('Climatology Reference',
+	  'EBF Reference'),cex=textSize,
+	col=c('black',altCol),lwd=lw,lty=c(1,1),bty='n')
+
 addNino(y=c(-100,aNino,aNino,-100))
 
 
@@ -455,11 +463,11 @@ points(x,y4,type='l',col=altCol,lwd=lw)
 abline(h=0)
 legend('topleft', '(b)', cex = textSize, bty='n')
 
-legend(2015.5,-0.01,as.character(signif(as.numeric(totalVec[3:4]),3)),text.col=c('black',altCol), bty='n')
+legend(2015.5,-0.01,as.character(signif(as.numeric(totalVec[3:4]),3)),
+	text.col=c('black',altCol), bty='n')
 
 legend(2001,0.22, 
-	c('Climatology Reference',
-	  'Probabilistic ENSO Reference'),cex=textSize,
+	c('Climatology Reference','EBF Reference'),cex=textSize,
 	col=c('black',altCol),lwd=lw,lty=c(1,1),bty='n')
 
 addNino(y=c(-100,aNino,aNino,-100))
@@ -468,8 +476,51 @@ addNino(y=c(-100,aNino,aNino,-100))
 dev.off()
 
 ###############################################################################
-# (13) Lead time plot
+# (12) Lead time plot
 ###############################################################################
 
-# currently made in multiLead.R
+# source the results from the multi lead analysis
+load(sprintf('%s/multiLead.Rda',ddir))
 
+# plot up the results
+pdf(sprintf('%s/12_leadTimeComp.pdf',plotdir),14,7)
+par(mfrow=c(1,2),mar=c(5, 5, 4, 3) + 0.1)
+
+plot(1:4,iriTropics[,1],ylim=c(-0.01,0.04),type='b',lwd=2,col='blue',
+	xlab='Lead Time (months)', ylab='Ranked Probability Skill Score',
+	main='Forecast Skill (All Seasons 2003-2016)',
+  cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize)
+
+grid(lwd=1.5)
+points(1:4,ensoTropics[,1],type='b',lwd=2,col='red')
+
+points(1:4,iriGlobal[,1],type='b',lwd=2,col='blue',lty=3)
+points(1:4,ensoGlobal[,1],type='b',lwd=2,col='red',lty=3)
+abline(h=0)
+
+legend(0.67,0.043, '(a)', bty='n',cex=textSize)
+
+# legend('topright', c('IRI Forecast (Tropics)', 'IRI Forecast (Global)',
+# 					 'ENSO Forecast (Tropics)', 'ENSO Forecast (Global)'),
+# 			col=c('blue','blue', 'red', 'red'),lwd=2,lty=c(1,3,1,3),cex=textSize)
+
+
+plot(1:4,iriTropics[,2],ylim=c(-0.01,0.04),type='b',lwd=2,col='blue',
+	xlab='Lead Time (months)', ylab='RPS Resolution Score',
+	main='Forecast Resolution (All Seasons 2003-2016)',
+  cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize)
+
+grid(lwd=1.5)
+points(1:4,ensoTropics[,2],type='b',lwd=2,col='red')
+
+points(1:4,iriGlobal[,2],type='b',lwd=2,col='blue',lty=3)
+points(1:4,ensoGlobal[,2],type='b',lwd=2,col='red',lty=3)
+abline(h=0)
+
+legend('topright', c('IRI Forecast (Tropics)', 'IRI Forecast (Global)',
+					 'Forecast-ENSO EBF (Tropics)', 'Forecast-ENSO EBF (Global)'),
+			col=c('blue','blue', 'red', 'red'),lwd=2,lty=c(1,3,1,3),cex=textSize,bty='n')
+
+legend(0.67,0.043, '(b)', bty='n',cex=textSize)
+
+dev.off()

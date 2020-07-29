@@ -6,6 +6,7 @@ source('Forecast/Code/createValidation.R')
 # Build the necessary forecast lists
 source('Forecast/Code/ensoAlternativeForecast.R')
 source('Forecast/Code/iriForecast.R')
+source('Forecast/Code/multiLead.R')
 
 # Verify the forecasts
 
@@ -22,5 +23,5 @@ if(seasonalVerification){
 	rm(list=ls())
 	gc()
 	source('Forecast/Namelists/namelist_FinalResults.Rnl')
-	source('Forecast/Code/evaluateSkillSeasonal.R')
+	source('Forecast/Code/seasonalRpss.R')
 }
