@@ -72,61 +72,59 @@ probColorsCont <- designer.colors(256, brewer.pal(9,'YlGnBu'))
 # lon x lat x season x el/la x high/low anom
 
 for(s in 1:length(seasonInds)){
-for(el in 1:3){
-for(hl in 1:2){
-tempField <- pValArray[,,seasonInds[s],el,hl]
+for(el in 1:2){
 
-# extrat the non-sig regions
-nonSig <- ifelse(tempField==-1,1,NA)
+plotName <- sprintf('%02d%s%s',s,nName[el],seasonName[seasonInds[s]])
 
-# set the sig reigons to NA in the plotting field
-tempField[tempField==-1] <- NA
-
-plotName <- sprintf('%02d%s%s%s',s,nName[el],anomName[hl],seasonName[seasonInds[s]])
-
-plotTitle <- sprintf('Probability of %s Normal Precipitation (%s, %s)',
-	anomName[hl], ellaName[el], seasonNameFull[seasonInds[s]])
-
-# plot the p-value masked by significance
-pdf(sprintf('%s/pVals/%sPval.pdf',plotdir,plotName),10,6)
-image.plot(lon,lat,tempField,col=hlColor[hl,],breaks=pValBreaks,
-	main=plotTitle,xlab='',ylab='')
-image(lon,lat,nonSig,col=nonSigColor,add=TRUE)
-image(lon,lat,dryMask[,,seasonInds[s]],col=dryColor,add=TRUE)
-world(add=TRUE)
-dev.off()
+plotTitle <- sprintf('%s Historical Precipitation Anomalies (%s)', ellaName[el], seasonNameFull[seasonInds[s]])
 
 
+# high field
+hl <- 1
 tempCounts <- sigCounts[,,seasonInds[s],el,hl]
 tempCounts[tempCounts==-1] <- NA
 
-tempProb <- tempCounts/ensoYears[,,seasonInds[s],el]
+tempProbHigh <- tempCounts/ensoYears[,,seasonInds[s],el]
+
+# low field
+hl <- 2
+tempCounts <- sigCounts[,,seasonInds[s],el,hl]
+tempCounts[tempCounts==-1] <- NA
+
+tempProbLow <- tempCounts/ensoYears[,,seasonInds[s],el]
 
 pdf(sprintf('%s/empiricalProbs/%sProb.pdf',plotdir,plotName),10,6)
-image.plot(lon,lat,tempProb,col=hlColor[hl,],breaks=probBreaks,
+image(lon,lat,dryMask[,,seasonInds[s]],col=dryColor,
 	main=plotTitle,xlab='',ylab='',ylim=c(-60,90),
-	cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize, legend.cex=textSize)
+	cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize)
+
+image(lon,lat,tempProbHigh,col=hlColor[1,],breaks=probBreaks, add=TRUE)
+image(lon,lat,tempProbLow,col=hlColor[2,],breaks=probBreaks, add=TRUE)
 #image(lon,lat,nonSig,col=nonSigColor,add=TRUE)
-image(lon,lat,dryMask[,,seasonInds[s]],col=dryColor,add=TRUE)
-image(lon,lat,oceanMask,col=oceanColor,add=T)
+
+image(lon,lat,oceanMask,col=oceanColor,add=TRUE)
 world(add=TRUE)
 abline(h=c(30,-30), lty=3)
 
 # optional labeling for paper plots
-if(hl==1){
-	legend(-197, 95, '(a)', cex = textSize, bty='n')
+if(el==1){
+	legend(-195, 95, '(a)', cex = textSize, bty='n')
 } else{
-	legend(-197, 95, '(b)', cex = textSize, bty='n')
+	legend(-195, 95, '(b)', cex = textSize, bty='n')
 }
 
 dev.off()
 
-# pdf(sprintf('%s/empiricalProbsCont/%sProb.pdf',plotdir,plotName),10,6)
-# image.plot(lon,lat,tempProb,breaks=probBreaksCont,col=probColorsCont,
-# 	main=plotTitle,xlab='',ylab='')
-# image(lon,lat,nonSig,col=nonSigColor,add=TRUE)
-# image(lon,lat,dryMask[,,seasonInds[s]],col=dryColor,add=TRUE)
-# world(add=TRUE)
-# dev.off()
 
-}}}
+}}
+
+
+paperdir <- '/Users/lenssen/Dropbox/DEES/LisaWork/ensoPaper/Revision02/Supplement'
+system(sprintf('cp %s/empiricalProbs/01NinoDJFProb.pdf %s/03a_NinoDJFProb.pdf',plotdir, paperdir))
+system(sprintf('cp %s/empiricalProbs/01NinaDJFProb.pdf %s/03b_NinaDJFProb.pdf',plotdir, paperdir))
+system(sprintf('cp %s/empiricalProbs/04NinoMAMProb.pdf %s/03a_NinoMAMProb.pdf',plotdir, paperdir))
+system(sprintf('cp %s/empiricalProbs/04NinaMAMProb.pdf %s/03b_NinaMAMProb.pdf',plotdir, paperdir))
+system(sprintf('cp %s/empiricalProbs/07NinoJJAProb.pdf %s/03a_NinoJJAProb.pdf',plotdir, paperdir))
+system(sprintf('cp %s/empiricalProbs/07NinaJJAProb.pdf %s/03b_NinaJJAProb.pdf',plotdir, paperdir))
+system(sprintf('cp %s/empiricalProbs/10NinoSONProb.pdf %s/03a_NinoSONProb.pdf',plotdir, paperdir))
+system(sprintf('cp %s/empiricalProbs/10NinaSONProb.pdf %s/03b_NinaSONProb.pdf',plotdir, paperdir))

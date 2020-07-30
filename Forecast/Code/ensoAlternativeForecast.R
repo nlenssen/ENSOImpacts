@@ -282,4 +282,3 @@ ensoRealDetForecastList <- list(lon=forecastList$lon,lat=forecastList$lat,
 
 save(ensoForecastList,ensoProbForecastList,ensoRealForecastList,ensoRealDetForecastList,
 		file=sprintf('%s/ensoForecast.Rda',ddir))
-

@@ -1,5 +1,5 @@
 # load in the processed enso series
-load('Data/RawProcessed/ninaSeasonalOni.Rda')
+load('Data/RawProcessed/ninaSeasonal.Rda')
 
 # arrange in a matrix for more intuitive calculations
 ninaMat <- matrix(c(ninaSeasonal$nina34), ncol=12,byrow=TRUE)

@@ -16,7 +16,8 @@ ninoSeasonal <- read.table(sprintf('Data/Raw/%s', ensoSeasonalFile),
 					header=FALSE, stringsAsFactors=FALSE)
 oniSeasonal  <- read.table(sprintf('Data/Raw/%s', enoOniFile),
 					header=TRUE, stringsAsFactors=FALSE)
-
+#
+# ONI from https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
 
 # first clean the monthly series
 timeMap <- as.matrix(ninoMonthly[,1:2])
