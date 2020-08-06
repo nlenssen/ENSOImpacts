@@ -149,8 +149,8 @@ rignSeries <- function(yzList, landPropMat, tropics = FALSE){
 				climTemp <- climTempRaw
 			}
 
-			igSeriesSplit[tInd,cutoff] <- -weighted.mean(log2(abs(yTemp-(1-zTemp))), weights=wTemp)
-			climSeriesSplit[tInd,cutoff] <- -weighted.mean(log2(abs(climTemp - (1-zTemp))), weight=wTemp)
+			igSeriesSplit[tInd,cutoff] <- -weighted.mean(log2(abs(yTemp-(1-zTemp))), w=wTemp)
+			climSeriesSplit[tInd,cutoff] <- -weighted.mean(log2(abs(climTemp - (1-zTemp))), w=wTemp)
 		}
 	}
 
@@ -222,8 +222,8 @@ rignTotal <- function(yzList, landPropMat, tropics = FALSE){
 		}
 
 
-		igPart[cutoff] <- -weighted.mean(log2(abs(yTemp-(1-zTemp))), weights=wTemp)
-		climPart[cutoff] <- -weighted.mean(log2(abs(climTemp - (1-zTemp))), weight=wTemp)
+		igPart[cutoff] <- -weighted.mean(log2(abs(yTemp-(1-zTemp))), w=wTemp)
+		climPart[cutoff] <- -weighted.mean(log2(abs(climTemp - (1-zTemp))), w=wTemp)
 	}
 
 	rig <- sum(igPart)
@@ -601,10 +601,10 @@ eirCalcFull <- function(fcast,obs,landPropMat=NULL){
 		igClimMat <- - log2(climMat)
 
 		eirSeriesGlobal[tInd] <- weighted.mean(2^(c(igClimMat) - c(igMat)) - 1,
-			weights=c(weightMat),na.rm=T)
+			w=c(weightMat),na.rm=T)
 
 		eirSeriesTropics[tInd] <- weighted.mean(2^(c(igClimMat[,tropicsLats]) - c(igMat[,tropicsLats])) - 1,
-			weights=c(weightMat[,tropicsLats]),na.rm=T)
+			w=c(weightMat[,tropicsLats]),na.rm=T)
 	}
 
 
@@ -619,8 +619,8 @@ eirCalcFull <- function(fcast,obs,landPropMat=NULL){
 	weightPropMat <- countPropMat * weightMat
 
 	# now, take the weighted mean of the EIR field for the total values
-	eirTotalGlobal <- weighted.mean(eirField,weights=weightPropMat,na.rm=T)
-	eirTotalTropics <- weighted.mean(eirField[,tropicsLats],weights=weightPropMat[,tropicsLats],na.rm=T)
+	eirTotalGlobal <- weighted.mean(eirField,w=weightPropMat,na.rm=T)
+	eirTotalTropics <- weighted.mean(eirField[,tropicsLats],w=weightPropMat[,tropicsLats],na.rm=T)
 
 	outList <- list(field = eirField, globalSeries = eirSeriesGlobal, tropicsSeries = eirSeriesTropics,
 					globalTotal = eirTotalGlobal, tropicsTotal = eirTotalTropics)

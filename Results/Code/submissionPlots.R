@@ -276,22 +276,22 @@ dev.off()
 ###############################################################################
 # (8) Reliability Diagrams
 ###############################################################################
-
+plotdir <- '/Users/lenssen/Dropbox/DEES/LisaWork/ensoPaper/Revision02/Revision2'
 # tropics without realistic included
 pdf(sprintf('%s/08_reliabilityDiagramsTropicsTrim.pdf',plotdir),18,5.5)
 
 par(mfrow=c(1,3))
 
-yr <- c(0,245000)
+yr <- c(0,249)
 
-reliabilityDiagram(iriReliability$tropics,yr,main='IRI Forecast Tropics Reliability')
-legend(-0.09, 1.06, '(a)', bty='n', cex=textSize)
+reliabilityDiagram(iriReliability$tropics,yr,main='IRI Forecast Tropics Reliability',textSize=2,scaleFactor=3)
+legend(-0.09, 1.06, '(a)', bty='n', cex=2)
 #reliabilityDiagram(ensoRealReliability$tropics,yr,main='ENSO Realistic Tropics Reliability')
-reliabilityDiagram(ensoProbReliability$tropics,yr,main='Probabilistic Known-ENSO EBF Tropics Reliability')
-legend(-0.09, 1.06, '(b)', bty='n', cex=textSize)
+reliabilityDiagram(ensoProbReliability$tropics,yr,main='Probabilistic Known-ENSO EBF Tropics Reliability',textSize=2,scaleFactor=3)
+legend(-0.09, 1.06, '(b)', bty='n', cex=2)
 
-reliabilityDiagram(ensoReliability$tropics,yr,main='Deterministic Known-ENSO EBF Tropics Reliability')
-legend(-0.09, 1.06, '(c)', bty='n', cex=textSize)
+reliabilityDiagram(ensoReliability$tropics,yr,main='Deterministic Known-ENSO EBF Tropics Reliability',textSize=2,scaleFactor=3)
+legend(-0.09, 1.06, '(c)', bty='n', cex=2)
 
 dev.off()
 
@@ -389,29 +389,31 @@ pal2 <- designer.colors(256, brewer.pal(11,'PiYG'))
 mainVec <- c("IRI Forecast RPSS",
 			 "Probabilistic Known-ENSO EBF RPSS")
 
+textSizeLarge <- 2
+
 pdf(sprintf('%s/10_fieldRpssProb.pdf',plotdir),10,18)
 par(mfrow=c(3,1))
 
 image.plot(lon,lat,z[,,1],col=pal,ylim=c(-60,90), zlim=zr,main=mainVec[1],xlab='',ylab='',
-	cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize, legend.cex=textSize)	
+	cex.lab=textSizeLarge, cex.axis=textSizeLarge, cex.main=textSizeLarge, cex.sub=textSizeLarge, legend.cex=textSizeLarge)	
 world(add=T)
 abline(h=c(30,-30), lty=3)	
-legend(-189, 92, '(a)', cex = textSize, bty='n')
+legend(-189, 92, '(a)', cex = textSizeLarge, bty='n')
 
 
 image.plot(lon,lat,z[,,2],col=pal,ylim=c(-60,90), zlim=zr,main=mainVec[2],xlab='',ylab='',
-	cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize, legend.cex=textSize)	
+	cex.lab=textSizeLarge, cex.axis=textSizeLarge, cex.main=textSizeLarge, cex.sub=textSizeLarge, legend.cex=textSizeLarge)	
 world(add=T)
 abline(h=c(30,-30), lty=3)
-legend(-189, 92, '(b)', cex = textSize, bty='n')
+legend(-189, 92, '(b)', cex = textSizeLarge, bty='n')
 
 
 image.plot(lon, lat, z2, ylim=c(-60,90), zlim=zr2, col=pal2, 
 	xlab='', ylab='', main='IRI Forecast RPSS (EBF reference)',
-	cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize, legend.cex=textSize)
+	cex.lab=textSizeLarge, cex.axis=textSizeLarge, cex.main=textSizeLarge, cex.sub=textSizeLarge, legend.cex=textSizeLarge)
 world(add=T)
 abline(h=c(30,-30), lty=3)
-legend(-189, 92, '(c)', cex = textSize, bty='n')
+legend(-189, 92, '(c)', cex = textSizeLarge, bty='n')
 
 dev.off()
 

@@ -946,7 +946,7 @@ reliability <- function(fcast,obs,binSize=0.05){
 }
 
 # function to plot a reliability diagram
-reliabilityDiagram <- function(dat,yr=NULL,textSize=1.5,...){
+reliabilityDiagram <- function(dat,yr=NULL,textSize=1.5,scaleFactor=0,...){
 
 	pal <- c('brown','darkgreen','blue')
 	transPal <- adjustcolor(pal,alpha=0.3)
@@ -955,13 +955,15 @@ reliabilityDiagram <- function(dat,yr=NULL,textSize=1.5,...){
 	barArrange <- matrix(NA,nrow=nrow(dat[[1]]),ncol=3)
 	for(i in 1:3) barArrange[,i] <- dat[[i]][,4]
 
+	# rescale the bars to have a better axis
+	barArrange <- barArrange/10^scaleFactor
 
 	if(is.null(yr)){
 		yr <- c(0,max(barArrange))*1.25
 	}
 
 	# plot the barplot of counts
-	par(mar=c(5,5,4,5) + 0.1)
+	par(mar=c(5,5,5,6) + 0.1)
 	barplot(t(barArrange),beside=T,axes=FALSE,ylim=yr,col=transPal)
 	axis(4,cex.axis=textSize,cex.lab=textSize)
 	
@@ -973,7 +975,7 @@ reliabilityDiagram <- function(dat,yr=NULL,textSize=1.5,...){
 		cex.lab=textSize, cex.axis=textSize, cex.main=textSize, cex.sub=textSize,...)
 	
 
-	mtext('# of Forecasts Issued', side=4, line=3,cex=1)
+	mtext(sprintf('# of Forecasts Issued (x 10^%d)',scaleFactor), side=4, line=3,cex=1.25)
 
 	grid()
 	for(i in 1:3){
