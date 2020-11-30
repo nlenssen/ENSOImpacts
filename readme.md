@@ -26,7 +26,7 @@ source('SharedCode/Scripts/cleanAllData.R')
 source('Results/Scripts/runEverything.R')
 ```
 
-## Overview of Code Oranization
+## Overview of Code Organization
 
 The codebase is organized into three major sub-projects:
 - `SharedCode/` The data cleaning and initial processing 
